@@ -59,8 +59,11 @@ namespace enV.Vehicles.Services
                 Make = vehicle.Make,
                 Model = vehicle.Model,
                 Year = vehicle.Year,
-                Color = vehicle.Color,
-                Mileage = vehicle.Mileage
+                Axles = vehicle.Axles,
+                EngineModel = vehicle.EngineModel,
+                FuelTankType = vehicle.FuelTankType,
+                VehicleType = vehicle.VehicleType,
+                VehicleDescriptor = vehicle.VehicleDescriptor,
             };
 
             return Task.FromResult ((Vehicle?)vehicleEntity);
