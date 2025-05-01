@@ -32,9 +32,9 @@ namespace enV.Vehicles.Controllers
 
             try
             {
-                using var stream = new StreamReader(file.OpenReadStream());
+                using var stream = file.OpenReadStream();
 
-                var recordCount = await _vehicleService.ImportFromCsv(stream).ConfigureAwait(false);
+                var recordCount = await _vehicleService.ImportFromCsv(file.Name, stream).ConfigureAwait(false);
 
                 return Ok(new { Message = "CSV imported successfully.", RecordCount = recordCount});
             }

@@ -9,14 +9,23 @@ namespace enV.Vehicles.Services
     public class VehicleService : IVehicleService
     {
         private readonly IQueryableDataStore _queryableDataStore;
-        public VehicleService(IQueryableDataStore queryableDataStore)
+        private readonly IBackingFileStore _backingFileStore;
+        public VehicleService(IQueryableDataStore queryableDataStore, IBackingFileStore backingFileStore)
         {
             _queryableDataStore = queryableDataStore;
+            _backingFileStore = backingFileStore;
         }   
 
-        public async Task<int> ImportFromCsv(StreamReader streamReader)
+        public async Task<int> ImportFromCsv(string fileName, Stream stream)
         {
-            using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+            // Read the stream into the BackingFileStore
+            var fileStoreId = Guid.NewGuid();
+            await _backingFileStore.StoreFileAsync(fileStoreId, fileName, stream);
+
+            // Read the csv and store the records in the queryable DataStore
+            stream.Position = 0;
+            using var memoryStreamReader = new StreamReader(stream);
+            using var csvReader = new CsvReader(memoryStreamReader, CultureInfo.InvariantCulture);
 
             var records = csvReader.GetRecords<VehicleDto>().Select(record => new env.Vehicles.Infrastructure.Models.Vehicle
             {
@@ -28,12 +37,30 @@ namespace enV.Vehicles.Services
             await _queryableDataStore.AddManyAsync(records).ConfigureAwait(false);
 
             return records.Count();
-
         }
 
-        public async Task<Vehicle> GetVehicleByVin(string vin)
+        public async Task<Vehicle?> GetVehicleByVin(string vin)
         {
-            throw new NotImplementedException();
+            var vehicle = _queryableDataStore.GetQueryable<env.Vehicles.Infrastructure.Models.Vehicle>()
+                .Where(v => v.VIN == vin)
+                .FirstOrDefault();
+
+            if (vehicle == null)
+            {
+                return null;
+            }
+
+            return new Vehicle
+            {
+                DealerId = vehicle.DealerId,
+                VIN = vehicle.VIN,
+                ModifiedDate = vehicle.ModifiedDate,
+                Make = vehicle.Make,
+                Model = vehicle.Model,
+                Year = vehicle.Year,
+                Color = vehicle.Color,
+                Mileage = vehicle.Mileage
+            };
         }
     }
 }

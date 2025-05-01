@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILiteDatabase>(_ => new LiteDatabase("Filename=vehicles.db;Connection=shared"));
 builder.Services.AddScoped<IQueryableDataStore, LiteDbQueryableDataStore>();
+builder.Services.AddScoped<IBackingFileStore, LiteDbBackingFileStore>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
