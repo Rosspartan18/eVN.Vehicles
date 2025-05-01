@@ -28,14 +28,16 @@ namespace enV.Vehicles.Services
             using var memoryStreamReader = new StreamReader(stream);
             using var csvReader = new CsvReader(memoryStreamReader, CultureInfo.InvariantCulture);
 
-            var records = csvReader.GetRecords<VehicleDto>().Select(record => new env.Vehicles.Infrastructure.Models.Vehicle
+            var records = csvReader.GetRecords<VehicleDto>().ToList();
+                     
+             var mappedRecords = records.Select(record => new env.Vehicles.Infrastructure.Models.Vehicle
             {
                 DealerId = record.DealerId,
                 VIN = record.VIN,
                 ModifiedDate = record.ModifiedDate
             });
 
-            await _queryableDataStore.AddManyAsync(records).ConfigureAwait(false);
+            await _queryableDataStore.AddManyAsync(mappedRecords).ConfigureAwait(false);
 
             return records.Count();
         }
@@ -68,7 +70,7 @@ namespace enV.Vehicles.Services
 
         public async Task<(IEnumerable<VehicleListEntry> Vehicles, int TotalCount)> GetVehiclesAsync(int pageNumber, int pageSize, int? dealerId = null, DateTimeOffset? modifiedAfterDateTimeOffset = null)
         {
-            var query = _queryableDataStore.GetQueryable<Vehicle>();
+            var query = _queryableDataStore.GetQueryable<env.Vehicles.Infrastructure.Models.Vehicle>();
 
             if (dealerId != null)
             {
