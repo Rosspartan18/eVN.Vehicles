@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILiteDatabase>(var => new LiteDatabase("Filename=vehicles.db;Connection=shared"));
-builder.Services.AddScoped<IQueryableDataStore, LiteDbQueryableDataStore>();
+builder.Services.AddScoped<IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle>, VehicleDataStore> ();
 builder.Services.AddScoped<IBackingFileStore, LiteDbBackingFileStore>();
 
 builder.Services.AddHttpClient("nhtsa", client =>

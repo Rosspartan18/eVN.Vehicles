@@ -1,4 +1,4 @@
-﻿using System.Net.Http;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
 using env.Vehicles.Infrastructure;
 
@@ -6,9 +6,9 @@ namespace enV.Vehicles.Services
 {
     public class VehicleAugmentingService : IVehicleAugmentingService
     {
-        private readonly IQueryableDataStore _queryableDataStore;
+        private readonly IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> _queryableDataStore;
         private readonly HttpClient _httpClient;
-        public VehicleAugmentingService(IQueryableDataStore queryableDataStore, IHttpClientFactory httpClientFactory)
+        public VehicleAugmentingService(IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> queryableDataStore, IHttpClientFactory httpClientFactory)
         {
             _queryableDataStore = queryableDataStore;
 
@@ -17,15 +17,15 @@ namespace enV.Vehicles.Services
 
         public async Task<int> AugmentAllVehiclesAsync()
         {
-            var vehicles = await _queryableDataStore.GetAllAsync<env.Vehicles.Infrastructure.Models.Vehicle>().ConfigureAwait(false);
+            var vehicles = (await _queryableDataStore.GetAllAsync().ConfigureAwait(false));
 
+            int updatedCount = 0;
             foreach (var vehicle in vehicles)
             {
                 var response = await _httpClient.GetAsync($"/api/vehicles/DecodeVin/{vehicle.VIN}?format=json");
                 if (response.IsSuccessStatusCode)
                 {
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-                    var vpicData = JsonSerializer.Deserialize<VpicResponse>(jsonResponse);
+                    var vpicData = await response.Content.ReadFromJsonAsync<VpicResponse>();
 
                     if (vpicData != null)
                     {
@@ -35,12 +35,17 @@ namespace enV.Vehicles.Services
                         vehicle.Year = vpicData.Results.FirstOrDefault(r => r.Variable == "Model Year")?.Value ?? vehicle.Year;
 
                         // Update the vehicle in the data store
-                        await _queryableDataStore.UpdateAsync(vehicle).ConfigureAwait(false);
+                        var result = await _queryableDataStore.UpdateAsync(vehicle).ConfigureAwait(false);
+
+                        if (result)
+                        {
+                            updatedCount++;
+                        }
                     }
                 }
             }
 
-            return vehicles.Count();
+            return updatedCount;
         }
     }
 

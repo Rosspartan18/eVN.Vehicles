@@ -9,9 +9,9 @@ namespace enV.Vehicles.Services
 
     public class VehicleService : IVehicleService
     {
-        private readonly IQueryableDataStore _queryableDataStore;
+        private readonly IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> _queryableDataStore;
         private readonly IBackingFileStore _backingFileStore;
-        public VehicleService(IQueryableDataStore queryableDataStore, IBackingFileStore backingFileStore)
+        public VehicleService(IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> queryableDataStore, IBackingFileStore backingFileStore)
         {
             _queryableDataStore = queryableDataStore;
             _backingFileStore = backingFileStore;
@@ -31,20 +31,18 @@ namespace enV.Vehicles.Services
             var records = csvReader.GetRecords<VehicleDto>().ToList();
                      
              var mappedRecords = records.Select(record => new env.Vehicles.Infrastructure.Models.Vehicle
-            {
-                DealerId = record.DealerId,
+             {
                 VIN = record.VIN,
+                DealerId = record.DealerId,
                 ModifiedDate = record.ModifiedDate
             });
 
-            await _queryableDataStore.AddManyAsync(mappedRecords).ConfigureAwait(false);
-
-            return records.Count();
+            return await _queryableDataStore.UpsertManyAsync(mappedRecords).ConfigureAwait(false);
         }
 
         public Task<Vehicle?> GetVehicleByVin(string vin)
         {
-            var vehicle = _queryableDataStore.GetQueryable<env.Vehicles.Infrastructure.Models.Vehicle>()
+            var vehicle = _queryableDataStore.GetQueryable()
                 .Where(v => v.VIN == vin)
                 .FirstOrDefault();
 
@@ -70,7 +68,7 @@ namespace enV.Vehicles.Services
 
         public async Task<(IEnumerable<VehicleListEntry> Vehicles, int TotalCount)> GetVehiclesAsync(int pageNumber, int pageSize, int? dealerId = null, DateTimeOffset? modifiedAfterDateTimeOffset = null)
         {
-            var query = _queryableDataStore.GetQueryable<env.Vehicles.Infrastructure.Models.Vehicle>();
+            var query = _queryableDataStore.GetQueryable();
 
             if (dealerId != null)
             {

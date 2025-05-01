@@ -1,7 +1,7 @@
 ﻿
 namespace env.Vehicles.Infrastructure
 {
-    public interface IQueryableDataStore
+    public interface IQueryableDataStore<T> where T : class
     {
         /// <summary>
         /// Adds an entity to the data store.
@@ -9,13 +9,13 @@ namespace env.Vehicles.Infrastructure
         /// <typeparam name="T"></typeparam>
         /// <param name="entity"></param>
         /// <returns></returns>
-        Task AddAsync<T>(T entity) where T : class;
-        Task AddManyAsync<T>(IEnumerable<T> entities) where T : class;
-        Task DeleteAsync<T>(int id) where T : class;
-        Task<IEnumerable<T>> GetAllAsync<T>() where T : class;
-        Task<T> GetByIdAsync<T>(int id) where T : class;
-        IQueryable<T> GetQueryable<T>() where T : class;
+        Task AddAsync(T entity);
+        Task<int> UpsertManyAsync(IEnumerable<T> entities);
+        Task DeleteAsync(int id);
+        Task<IList<T>> GetAllAsync();
+        Task<T> GetByIdAsync(int id);
+        IQueryable<T> GetQueryable();
         Task SaveChangesAsync();
-        Task UpdateAsync<T>(T entity) where T : class;
+        Task<bool> UpdateAsync(T entity);
     }
 }
