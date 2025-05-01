@@ -1,10 +1,15 @@
+using env.Vehicles.Infrastructure;
 using enV.Vehicles.Services;
+using LiteDB;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<ILiteDatabase>(_ => new LiteDatabase("Filename=vehicles.db;Connection=shared"));
+builder.Services.AddScoped<IQueryableDataStore, LiteDbQueryableDataStore>();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
