@@ -10,10 +10,8 @@ namespace enV.Vehicles.Controllers
     [Route("[controller]")]
     public class VehicleController : ControllerBase
     {
-
         private readonly ILogger<VehicleController> _logger;
         private readonly IVehicleService _vehicleService;
-
 
         public VehicleController(IVehicleService vehicleService, ILogger<VehicleController> logger)
         {
@@ -36,7 +34,7 @@ namespace enV.Vehicles.Controllers
 
                 var recordCount = await _vehicleService.ImportFromCsv(file.Name, stream).ConfigureAwait(false);
 
-                return Ok(new { Message = "CSV imported successfully.", RecordCount = recordCount});
+                return Ok(new { Message = "CSV imported successfully.", RecordCount = recordCount });
             }
             catch (Exception ex)
             {
@@ -44,7 +42,6 @@ namespace enV.Vehicles.Controllers
                 return StatusCode(500, "An error occurred while processing the file.");
             }
         }
-
 
         [HttpGet("get-by-vin/{vin}")]
         public async Task<IActionResult> GetVehicleByVin(string vin)

@@ -6,6 +6,7 @@ using enV.Vehicles.Services.Entities;
 
 namespace enV.Vehicles.Services
 {
+
     public class VehicleService : IVehicleService
     {
         private readonly IQueryableDataStore _queryableDataStore;
@@ -14,7 +15,7 @@ namespace enV.Vehicles.Services
         {
             _queryableDataStore = queryableDataStore;
             _backingFileStore = backingFileStore;
-        }   
+        }
 
         public async Task<int> ImportFromCsv(string fileName, Stream stream)
         {
@@ -39,7 +40,7 @@ namespace enV.Vehicles.Services
             return records.Count();
         }
 
-        public async Task<Vehicle?> GetVehicleByVin(string vin)
+        public Task<Vehicle?> GetVehicleByVin(string vin)
         {
             var vehicle = _queryableDataStore.GetQueryable<env.Vehicles.Infrastructure.Models.Vehicle>()
                 .Where(v => v.VIN == vin)
@@ -47,10 +48,10 @@ namespace enV.Vehicles.Services
 
             if (vehicle == null)
             {
-                return null;
+                return Task.FromResult((Vehicle?)null);
             }
 
-            return new Vehicle
+            var vehicleEntity = new Vehicle
             {
                 DealerId = vehicle.DealerId,
                 VIN = vehicle.VIN,
@@ -61,6 +62,8 @@ namespace enV.Vehicles.Services
                 Color = vehicle.Color,
                 Mileage = vehicle.Mileage
             };
+
+            return Task.FromResult ((Vehicle?)vehicleEntity);
         }
     }
 }

@@ -7,14 +7,23 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<ILiteDatabase>(_ => new LiteDatabase("Filename=vehicles.db;Connection=shared"));
+builder.Services.AddScoped<ILiteDatabase>(var => new LiteDatabase("Filename=vehicles.db;Connection=shared"));
 builder.Services.AddScoped<IQueryableDataStore, LiteDbQueryableDataStore>();
 builder.Services.AddScoped<IBackingFileStore, LiteDbBackingFileStore>();
+
+builder.Services.AddHttpClient("nhtsa", client =>
+{
+    client.BaseAddress = new Uri("https://vpic.nhtsa.dot.gov");
+
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+
+});
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IVehicleAugmentingService, VehicleAugmentingService>();
 
 var app = builder.Build();
 
