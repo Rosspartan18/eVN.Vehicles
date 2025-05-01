@@ -55,5 +55,32 @@ namespace enV.Vehicles.Controllers
 
             return Ok(vehicle);
         }
+
+        [HttpGet("list")]
+        public async Task<IActionResult> ListVehicles([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] int? dealerId = null, [FromQuery] DateTimeOffset? modifiedAfterDateTimeOffset = null)
+        {
+            if (pageNumber <= 0 || pageSize <= 0)
+            {
+                return BadRequest("Page number and page size must be greater than zero.");
+            }
+
+            try
+            {
+                var (vehicles, totalCount) = await _vehicleService.GetVehiclesAsync(pageNumber, pageSize, dealerId, modifiedAfterDateTimeOffset).ConfigureAwait(false);
+
+                return Ok(new
+                {
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    Vehicles = vehicles
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while listing vehicles.");
+                return StatusCode(500, "An error occurred while listing vehicles.");
+            }
+        }
     }
 }

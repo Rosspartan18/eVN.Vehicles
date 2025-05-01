@@ -65,5 +65,34 @@ namespace enV.Vehicles.Services
 
             return Task.FromResult ((Vehicle?)vehicleEntity);
         }
+
+        public async Task<(IEnumerable<VehicleListEntry> Vehicles, int TotalCount)> GetVehiclesAsync(int pageNumber, int pageSize, int? dealerId = null, DateTimeOffset? modifiedAfterDateTimeOffset = null)
+        {
+            var query = _queryableDataStore.GetQueryable<Vehicle>();
+
+            if (dealerId != null)
+            {
+                query = query.Where(v => v.DealerId == dealerId);
+            }
+
+            if (modifiedAfterDateTimeOffset != null)
+            {
+                query = query.Where(v => v.ModifiedDate > modifiedAfterDateTimeOffset);
+            }
+
+            var totalCount = query.Count();
+
+            var vehicles = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(v => new VehicleListEntry
+                {
+                    VIN = v.VIN,
+                    DealerId = v.DealerId,
+                    ModifiedDate = v.ModifiedDate
+                });
+
+            return (vehicles, totalCount);
+        }
     }
 }
