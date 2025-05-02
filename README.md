@@ -1,4 +1,4 @@
-# enV Vehicles Solution
+# eVN Vehicles Solution
 
 This solution is designed to manage vehicle data, including importing vehicle information from CSV files, retrieving vehicle details, and augmenting vehicle data using external sources like the NHTSA vPIC API.
 
@@ -25,7 +25,7 @@ dotnet build
 
 ### 3. Run the Application
 Run the application using the following command:
-dotnet run --project enV.Vehicles
+dotnet run --project eVN.Vehicles
 
 The application will start and listen on the ports specified in launch profile (e.g., `https://localhost:7115`).
 
@@ -72,7 +72,7 @@ curl -X POST https://localhost:7115/VehicleAugmenting/augment
 ## Configuration
 
 ### App Settings
-The application uses default configurations. If you need to customize settings (e.g., database connection, API keys), update the `appsettings.json` file in the `enV.Vehicles` project.
+The application uses default configurations. If you need to customize settings (e.g., database connection, API keys), update the `appsettings.json` file in the `eVN.Vehicles` project.
 
 ### Dependencies
 Ensure the following dependencies are installed:
