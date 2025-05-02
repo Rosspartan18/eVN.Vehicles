@@ -1,7 +1,6 @@
-﻿
-using enV.Vehicles.Services.Entities;
+﻿using eVN.Vehicles.Services.Entities;
 
-namespace enV.Vehicles.Services
+namespace eVN.Vehicles.Services
 {
     public interface IVehicleService
     {

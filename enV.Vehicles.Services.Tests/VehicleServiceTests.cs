@@ -1,8 +1,8 @@
-﻿using env.Vehicles.Infrastructure.Models;
-using env.Vehicles.Infrastructure.Storage;
+﻿using eVN.Vehicles.Infrastructure.Models;
+using eVN.Vehicles.Infrastructure.Storage;
 using Moq;
 
-namespace enV.Vehicles.Services.Tests
+namespace eVN.Vehicles.Services.Tests
 {
     [TestClass]
     public class VehicleServiceTests

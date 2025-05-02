@@ -1,6 +1,7 @@
-using env.Vehicles.Infrastructure.Storage;
-using enV.Vehicles.Services;
-using enV.Vehicles.Services.ServiceClient;
+using eVN.Vehicles.Infrastructure.Models;
+using eVN.Vehicles.Infrastructure.Storage;
+using eVN.Vehicles.Services;
+using eVN.Vehicles.Services.ServiceClient;
 using LiteDB;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILiteDatabase>(var => new LiteDatabase("Filename=vehicles.db;Connection=shared"));
-builder.Services.AddScoped<IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle>, VehicleDataStore> ();
+builder.Services.AddScoped<IQueryableDataStore<Vehicle>, VehicleDataStore> ();
 builder.Services.AddScoped<IBackingFileStore, LiteDbBackingFileStore>();
 builder.Services.AddScoped<INhtsaServiceClient, NhtsaServiceClient>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\enV.Vehicles.Services\enV.Vehicles.Services.csproj" />
+    <ProjectReference Include="..\enV.Vehicles.Services\eVN.Vehicles.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,22 +1,22 @@
-﻿using env.Vehicles.Infrastructure.Models;
-using env.Vehicles.Infrastructure.Storage;
-using enV.Vehicles.Services.ServiceClient;
-using enV.Vehicles.Services.ServiceClient.Models;
+﻿using eVN.Vehicles.Infrastructure.Models;
+using eVN.Vehicles.Infrastructure.Storage;
+using eVN.Vehicles.Services.ServiceClient;
+using eVN.Vehicles.Services.ServiceClient.Models;
 
-namespace enV.Vehicles.Services
+namespace eVN.Vehicles.Services
 {
     /// <summary>
     /// Provides services for augmenting vehicle data with external sources.
     /// </summary>
     public class VehicleAugmentingService : IVehicleAugmentingService
     {
-        private readonly IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> _queryableDataStore;
+        private readonly IQueryableDataStore<Vehicle> _queryableDataStore;
         private readonly INhtsaServiceClient _nhtsaServiceClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VehicleAugmentingService"/> class.
         /// </summary>
-        public VehicleAugmentingService(IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> queryableDataStore, INhtsaServiceClient nhtsaServiceClient)
+        public VehicleAugmentingService(IQueryableDataStore<Vehicle> queryableDataStore, INhtsaServiceClient nhtsaServiceClient)
         {
             _queryableDataStore = queryableDataStore;
             _nhtsaServiceClient = nhtsaServiceClient;
@@ -24,7 +24,7 @@ namespace enV.Vehicles.Services
 
         public async Task<int> AugmentAllVehiclesAsync()
         {
-            var vehicles = (await _queryableDataStore.GetAllAsync().ConfigureAwait(false));
+            var vehicles = await _queryableDataStore.GetAllAsync().ConfigureAwait(false);
 
             // Foreach of the vehicles, augment them.
             var augmentTasks = vehicles.Select(v => AugmentVehicle(v));

@@ -1,7 +1,6 @@
-﻿
-using enV.Vehicles.Services.ServiceClient.Models;
+﻿using eVN.Vehicles.Services.ServiceClient.Models;
 
-namespace enV.Vehicles.Services.ServiceClient
+namespace eVN.Vehicles.Services.ServiceClient
 {
     public interface INhtsaServiceClient
     {

@@ -1,23 +1,23 @@
 ﻿using System.Globalization;
 using CsvHelper;
-using env.Vehicles.Infrastructure.Storage;
-using enV.Vehicles.DataTransferObjects;
-using enV.Vehicles.Services.Entities;
+using eVN.Vehicles.DataTransferObjects;
+using eVN.Vehicles.Infrastructure.Storage;
+using eVN.Vehicles.Services.Entities;
 
-namespace enV.Vehicles.Services
+namespace eVN.Vehicles.Services
 {
     /// <summary>
     /// Provides services for managing vehicle data.
     /// </summary>
     public class VehicleService : IVehicleService
     {
-        private readonly IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> _queryableDataStore;
+        private readonly IQueryableDataStore<Infrastructure.Models.Vehicle> _queryableDataStore;
         private readonly IBackingFileStore _backingFileStore;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VehicleService"/> class.
         /// </summary>
-        public VehicleService(IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> queryableDataStore, IBackingFileStore backingFileStore)
+        public VehicleService(IQueryableDataStore<Infrastructure.Models.Vehicle> queryableDataStore, IBackingFileStore backingFileStore)
         {
             _queryableDataStore = queryableDataStore;
             _backingFileStore = backingFileStore;
@@ -36,7 +36,7 @@ namespace enV.Vehicles.Services
 
             var records = csvReader.GetRecords<VehicleDto>().ToList();
                      
-             var mappedRecords = records.Select(record => new env.Vehicles.Infrastructure.Models.Vehicle
+             var mappedRecords = records.Select(record => new eVN.Vehicles.Infrastructure.Models.Vehicle
              {
                 VIN = record.VIN,
                 DealerId = record.DealerId,
@@ -56,7 +56,7 @@ namespace enV.Vehicles.Services
             return fileName;
         }
 
-        public Task<Vehicle?> GetVehicleByVin(string vin)
+        public Task<Entities.Vehicle?> GetVehicleByVin(string vin)
         {
             var vehicle = _queryableDataStore.GetQueryable()
                 .Where(v => v.VIN == vin)
@@ -64,10 +64,10 @@ namespace enV.Vehicles.Services
 
             if (vehicle == null)
             {
-                return Task.FromResult((Vehicle?)null);
+                return Task.FromResult((Entities.Vehicle?)null);
             }
 
-            var vehicleEntity = new Vehicle
+            var vehicleEntity = new Entities.Vehicle
             {
                 DealerId = vehicle.DealerId,
                 VIN = vehicle.VIN,
@@ -82,7 +82,7 @@ namespace enV.Vehicles.Services
                 VehicleDescriptor = vehicle.VehicleDescriptor,
             };
 
-            return Task.FromResult ((Vehicle?)vehicleEntity);
+            return Task.FromResult ((Entities.Vehicle?)vehicleEntity);
         }
 
         public Task<(IEnumerable<VehicleListEntry> Vehicles, int TotalCount)> GetVehiclesAsync(int pageNumber, int pageSize, int? dealerId = null, DateTimeOffset? modifiedAfterDateTimeOffset = null)

@@ -1,4 +1,4 @@
-﻿namespace enV.Vehicles.Services.Entities
+﻿namespace eVN.Vehicles.Services.Entities
 {    
     /// <summary>
     /// Represents a vehicle entity.

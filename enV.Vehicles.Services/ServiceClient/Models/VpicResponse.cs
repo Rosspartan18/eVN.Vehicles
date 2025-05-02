@@ -1,4 +1,4 @@
-﻿namespace enV.Vehicles.Services.ServiceClient.Models
+﻿namespace eVN.Vehicles.Services.ServiceClient.Models
 {
     public class VpicResponse
     {

@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\enV.Vehicles.DataTransferObjects\enV.Vehicles.DataTransferObjects.csproj" />
-    <ProjectReference Include="..\env.Vehicles.Infrastructure\env.Vehicles.Infrastructure.csproj" />
+    <ProjectReference Include="..\enV.Vehicles.DataTransferObjects\eVN.Vehicles.DataTransferObjects.csproj" />
+    <ProjectReference Include="..\env.Vehicles.Infrastructure\eVN.Vehicles.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

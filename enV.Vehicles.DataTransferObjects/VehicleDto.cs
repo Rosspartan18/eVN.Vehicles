@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-namespace enV.Vehicles.DataTransferObjects
+namespace eVN.Vehicles.DataTransferObjects
 {
     public record VehicleDto
     {

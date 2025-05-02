@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\env.Vehicles.Infrastructure\env.Vehicles.Infrastructure.csproj" />
-    <ProjectReference Include="..\enV.Vehicles.Services\enV.Vehicles.Services.csproj" />
+    <ProjectReference Include="..\env.Vehicles.Infrastructure\eVN.Vehicles.Infrastructure.csproj" />
+    <ProjectReference Include="..\enV.Vehicles.Services\eVN.Vehicles.Services.csproj" />
   </ItemGroup>
 
 </Project>

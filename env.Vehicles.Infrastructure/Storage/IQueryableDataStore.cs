@@ -1,4 +1,4 @@
-﻿namespace env.Vehicles.Infrastructure.Storage
+﻿namespace eVN.Vehicles.Infrastructure.Storage
 {
     public interface IQueryableDataStore<T> where T : class
     {

@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
-using CsvHelper.Configuration.Attributes;
-using enV.Vehicles.Services.ServiceClient.Models;
+﻿using System.Net.Http.Json;
+using eVN.Vehicles.Services.ServiceClient.Models;
 using Microsoft.Extensions.Logging;
 
-namespace enV.Vehicles.Services.ServiceClient
+namespace eVN.Vehicles.Services.ServiceClient
 {
 
     public sealed class NhtsaServiceClient : IDisposable, INhtsaServiceClient

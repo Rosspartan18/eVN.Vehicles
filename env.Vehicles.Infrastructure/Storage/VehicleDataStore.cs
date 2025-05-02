@@ -1,8 +1,9 @@
-﻿using LiteDB;
+﻿using eVN.Vehicles.Infrastructure.Models;
+using LiteDB;
 
-namespace env.Vehicles.Infrastructure.Storage
+namespace eVN.Vehicles.Infrastructure.Storage
 {
-    public class VehicleDataStore : LiteDbQueryableDataStore<Models.Vehicle>
+    public class VehicleDataStore : LiteDbQueryableDataStore<Vehicle>
     {
         public VehicleDataStore(ILiteDatabase database) : base(database)
         {

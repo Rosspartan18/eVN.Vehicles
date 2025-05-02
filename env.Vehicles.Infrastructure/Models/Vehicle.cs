@@ -1,6 +1,6 @@
 ﻿using LiteDB;
 
-namespace env.Vehicles.Infrastructure.Models
+namespace eVN.Vehicles.Infrastructure.Models
 {
     public class Vehicle
     {
