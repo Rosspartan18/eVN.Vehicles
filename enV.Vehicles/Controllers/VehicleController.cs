@@ -23,6 +23,11 @@ namespace enV.Vehicles.Controllers
         }
 
 
+        /// <summary>
+        /// Imports the CSV file
+        /// </summary>
+        /// <param name="file">The CSV file tp be imported.</param>
+        /// <returns>Number of records added and identifier for the imported Csv</returns>
         [HttpPost("import-csv")]
         public async Task<IActionResult> ImportFromCsv(IFormFile file)
         {
@@ -35,14 +40,42 @@ namespace enV.Vehicles.Controllers
             {
                 using var stream = file.OpenReadStream();
 
-                var recordCount = await _vehicleService.ImportFromCsv(file.Name, stream).ConfigureAwait(false);
+                var (recordCount, storageId) = await _vehicleService.ImportFromCsv(file.Name, stream).ConfigureAwait(false);
 
-                return Ok(new { Message = "CSV imported successfully.", RecordCount = recordCount });
+                return Ok(new { Message = "CSV imported successfully.", RecordCount = recordCount, CsvIdentifier  = storageId });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while importing CSV.");
                 return StatusCode(500, "An error occurred while processing the file.");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the imported CSV file by its identifier.
+        /// </summary>
+        /// <param name="csvIdentifier">The unique identifier of the imported CSV file.</param>
+        /// <returns>The CSV file as a downloadable response.</returns>
+        [HttpGet("get-imported-csv/{csvIdentifier}")]
+        public async Task<IActionResult> GetImportedCsv(Guid csvIdentifier)
+        {
+            try
+            {
+                var memoryStream = new MemoryStream();
+                var fileName = await _vehicleService.RetrieveCsv(csvIdentifier, memoryStream).ConfigureAwait(false);
+
+                if (fileName == null)
+                {
+                    return NotFound(new { Message = $"CSV file with identifier '{csvIdentifier}' not found." });
+                }
+
+                memoryStream.Position = 0; // Reset the stream position for reading
+                return File(memoryStream, "text/csv", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving the imported CSV.");
+                return StatusCode(500, "An error occurred while retrieving the imported CSV.");
             }
         }
 

@@ -23,7 +23,7 @@ namespace enV.Vehicles.Services
             _backingFileStore = backingFileStore;
         }
 
-        public async Task<int> ImportFromCsv(string fileName, Stream stream)
+        public async Task<(int, Guid)> ImportFromCsv(string fileName, Stream stream)
         {
             // Read the stream into the BackingFileStore
             var fileStoreId = Guid.NewGuid();
@@ -40,10 +40,20 @@ namespace enV.Vehicles.Services
              {
                 VIN = record.VIN,
                 DealerId = record.DealerId,
-                ModifiedDate = record.ModifiedDate
+                ModifiedDate = record.ModifiedDate,
             });
 
-            return await _queryableDataStore.UpsertManyAsync(mappedRecords).ConfigureAwait(false);
+            var upsertCount = await _queryableDataStore.UpsertManyAsync(mappedRecords).ConfigureAwait(false);
+
+            return (upsertCount, fileStoreId);
+        }
+
+        public async Task<string?> RetrieveCsv(Guid id, Stream stream)
+        {
+
+            var fileName = await _backingFileStore.RetrieveFileAsync(id, stream);
+
+            return fileName;
         }
 
         public Task<Vehicle?> GetVehicleByVin(string vin)
@@ -103,5 +113,7 @@ namespace enV.Vehicles.Services
 
             return (vehicles, totalCount);
         }
+
+
     }
 }
