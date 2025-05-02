@@ -1,5 +1,7 @@
 ﻿using env.Vehicles.Infrastructure.Models;
 using env.Vehicles.Infrastructure.Storage;
+using enV.Vehicles.Services.ServiceClient;
+using enV.Vehicles.Services.ServiceClient.Models;
 using Moq;
 
 namespace enV.Vehicles.Services.Tests
@@ -8,14 +10,14 @@ namespace enV.Vehicles.Services.Tests
     public class VehicleAugmentingServiceTests
     {
         private readonly Mock<IQueryableDataStore<Vehicle>> _dataStoreMock;
-        private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
+        private readonly Mock<INhtsaServiceClient> _nhtsaServiceClient;
         private readonly VehicleAugmentingService _vehicleAugmentingService;
 
         public VehicleAugmentingServiceTests()
         {
             _dataStoreMock = new Mock<IQueryableDataStore<Vehicle>>();
-            _httpClientFactoryMock = new Mock<IHttpClientFactory>();
-            _vehicleAugmentingService = new VehicleAugmentingService(_dataStoreMock.Object, _httpClientFactoryMock.Object);
+            _nhtsaServiceClient = new Mock<INhtsaServiceClient>();
+            _vehicleAugmentingService = new VehicleAugmentingService(_dataStoreMock.Object, _nhtsaServiceClient.Object);
         }
 
         [TestMethod]
@@ -28,7 +30,18 @@ namespace enV.Vehicles.Services.Tests
                 new Vehicle { VIN = "2", DealerId = 1, ModifiedDate = DateTimeOffset.UtcNow }
             };
 
+
+            _dataStoreMock.Setup(ds => ds.UpdateAsync(It.IsAny<Vehicle>())).ReturnsAsync(true);
             _dataStoreMock.Setup(ds => ds.GetAllAsync()).ReturnsAsync(vehicles);
+            _nhtsaServiceClient.Setup(n => n.DecodeVin(It.IsAny<string>()))
+                .ReturnsAsync(new VpicResponse
+                {
+                    Results = new List<VpicResult>
+                    {
+                        new VpicResult
+                        { Variable = "Make", Value = "TestMake" },
+                    }
+                });
 
             // Act
             var augmentedCount = await _vehicleAugmentingService.AugmentAllVehiclesAsync();

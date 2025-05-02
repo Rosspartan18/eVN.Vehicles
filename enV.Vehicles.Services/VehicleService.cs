@@ -85,7 +85,7 @@ namespace enV.Vehicles.Services
             return Task.FromResult ((Vehicle?)vehicleEntity);
         }
 
-        public async Task<(IEnumerable<VehicleListEntry> Vehicles, int TotalCount)> GetVehiclesAsync(int pageNumber, int pageSize, int? dealerId = null, DateTimeOffset? modifiedAfterDateTimeOffset = null)
+        public Task<(IEnumerable<VehicleListEntry> Vehicles, int TotalCount)> GetVehiclesAsync(int pageNumber, int pageSize, int? dealerId = null, DateTimeOffset? modifiedAfterDateTimeOffset = null)
         {
             var query = _queryableDataStore.GetQueryable();
 
@@ -111,7 +111,7 @@ namespace enV.Vehicles.Services
                     ModifiedDate = v.ModifiedDate
                 });
 
-            return (vehicles, totalCount);
+            return Task.FromResult((vehicles.AsEnumerable(), totalCount));
         }
 
 

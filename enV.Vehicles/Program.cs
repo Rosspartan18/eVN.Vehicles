@@ -1,5 +1,6 @@
 using env.Vehicles.Infrastructure.Storage;
 using enV.Vehicles.Services;
+using enV.Vehicles.Services.ServiceClient;
 using LiteDB;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +11,11 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ILiteDatabase>(var => new LiteDatabase("Filename=vehicles.db;Connection=shared"));
 builder.Services.AddScoped<IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle>, VehicleDataStore> ();
 builder.Services.AddScoped<IBackingFileStore, LiteDbBackingFileStore>();
+builder.Services.AddScoped<INhtsaServiceClient, NhtsaServiceClient>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IVehicleAugmentingService, VehicleAugmentingService>();
 
-builder.Services.AddHttpClient("nhtsa", client =>
+builder.Services.AddHttpClient<NhtsaServiceClient>("nhtsa", client =>
 {
     client.BaseAddress = new Uri("https://vpic.nhtsa.dot.gov");
 
@@ -21,9 +25,6 @@ builder.Services.AddHttpClient("nhtsa", client =>
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-builder.Services.AddScoped<IVehicleService, VehicleService>();
-builder.Services.AddScoped<IVehicleAugmentingService, VehicleAugmentingService>();
 
 var app = builder.Build();
 

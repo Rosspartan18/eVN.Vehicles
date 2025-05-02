@@ -1,5 +1,6 @@
-﻿using System.Net.Http.Json;
-using env.Vehicles.Infrastructure.Storage;
+﻿using env.Vehicles.Infrastructure.Storage;
+using enV.Vehicles.Services.ServiceClient;
+using enV.Vehicles.Services.ServiceClient.Models;
 
 namespace enV.Vehicles.Services
 {
@@ -9,16 +10,15 @@ namespace enV.Vehicles.Services
     public class VehicleAugmentingService : IVehicleAugmentingService
     {
         private readonly IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> _queryableDataStore;
-        private readonly HttpClient _httpClient;
+        private readonly INhtsaServiceClient _nhtsaServiceClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VehicleAugmentingService"/> class.
         /// </summary>
-        public VehicleAugmentingService(IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> queryableDataStore, IHttpClientFactory httpClientFactory)
+        public VehicleAugmentingService(IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> queryableDataStore, INhtsaServiceClient nhtsaServiceClient)
         {
             _queryableDataStore = queryableDataStore;
-
-            _httpClient = httpClientFactory.CreateClient("nhtsa");
+            _nhtsaServiceClient = nhtsaServiceClient;
         }
 
         public async Task<int> AugmentAllVehiclesAsync()
@@ -26,76 +26,70 @@ namespace enV.Vehicles.Services
             var vehicles = (await _queryableDataStore.GetAllAsync().ConfigureAwait(false));
 
             int updatedCount = 0;
-
             foreach (var vehicle in vehicles)
             {
-                var response = await _httpClient.GetAsync($"/api/vehicles/DecodeVin/{vehicle.VIN}?format=json");
-                if (response.IsSuccessStatusCode)
+                var vpicData = await _nhtsaServiceClient.DecodeVin(vehicle.VIN);
+                if (vpicData != null)
                 {
-                    var vpicData = await response.Content.ReadFromJsonAsync<VpicResponse>();
-
                     // Augment the vehicle with data from vPIC
                     bool needsUpdate = false;
-                    if (vpicData != null)
+                    if (TryGetVariable(vpicData.Results, "Make", out var make))
                     {
-                        if (TryGetVariable(vpicData.Results, "Make", out var make))
-                        {
-                            vehicle.Make = make;
-                            needsUpdate = true;
-                        }
+                        vehicle.Make = make;
+                        needsUpdate = true;
+                    }
 
-                        if (TryGetVariable(vpicData.Results, "Model", out var model))
-                        {
-                            vehicle.Model = make;
-                            needsUpdate = true;
-                        }
+                    if (TryGetVariable(vpicData.Results, "Model", out var model))
+                    {
+                        vehicle.Model = make;
+                        needsUpdate = true;
+                    }
 
-                        if (TryGetVariable(vpicData.Results, "Model Year", out var modelYear))
-                        {
-                            vehicle.Year = modelYear;
-                            needsUpdate = true;
-                        }
+                    if (TryGetVariable(vpicData.Results, "Model Year", out var modelYear))
+                    {
+                        vehicle.Year = modelYear;
+                        needsUpdate = true;
+                    }
 
-                        if (TryGetVariable(vpicData.Results, "Axles", out var axles))
-                        {
-                            vehicle.Axles = axles;
-                            needsUpdate = true;
-                        }
+                    if (TryGetVariable(vpicData.Results, "Axles", out var axles))
+                    {
+                        vehicle.Axles = axles;
+                        needsUpdate = true;
+                    }
 
-                        if (TryGetVariable(vpicData.Results, "Engine Model", out var engineModel))
-                        {
+                    if (TryGetVariable(vpicData.Results, "Engine Model", out var engineModel))
+                    {
               
-                            vehicle.EngineModel = engineModel;
-                            needsUpdate = true;
-                        }
+                        vehicle.EngineModel = engineModel;
+                        needsUpdate = true;
+                    }
 
-                        if (TryGetVariable(vpicData.Results, "Fuel-Tank Type", out var fuelTankType))
+                    if (TryGetVariable(vpicData.Results, "Fuel-Tank Type", out var fuelTankType))
+                    {
+                        vehicle.FuelTankType = fuelTankType;
+                        needsUpdate = true;
+                    }
+
+                    if (TryGetVariable(vpicData.Results, "Vehicle Type", out var vehicleType))
+                    {
+                        vehicle.VehicleType = vehicleType;
+                        needsUpdate = true;
+                    }
+
+                    if (TryGetVariable(vpicData.Results, "Vehicle Descriptor", out var vehicleDescriptor))
+                    {
+                        vehicle.VehicleDescriptor = vehicleDescriptor;
+                        needsUpdate = true;
+                    }
+
+                    // Update the vehicle in the data store
+                    if (needsUpdate)
+                    {
+                        var result = await _queryableDataStore.UpdateAsync(vehicle).ConfigureAwait(false);
+
+                        if (result)
                         {
-                            vehicle.FuelTankType = fuelTankType;
-                            needsUpdate = true;
-                        }
-
-                        if (TryGetVariable(vpicData.Results, "Vehicle Type", out var vehicleType))
-                        {
-                            vehicle.VehicleType = vehicleType;
-                            needsUpdate = true;
-                        }
-
-                        if (TryGetVariable(vpicData.Results, "Vehicle Descriptor", out var vehicleDescriptor))
-                        {
-                            vehicle.VehicleDescriptor = vehicleDescriptor;
-                            needsUpdate = true;
-                        }
-
-                        // Update the vehicle in the data store
-                        if (needsUpdate)
-                        {
-                            var result = await _queryableDataStore.UpdateAsync(vehicle).ConfigureAwait(false);
-
-                            if (result)
-                            {
-                                updatedCount++;
-                            }
+                            updatedCount++;
                         }
                     }
                 }
@@ -119,19 +113,5 @@ namespace enV.Vehicles.Services
                 return true;
             }
         }
-    }
-
-
-
-    public class VpicResponse
-    {
-
-        public required List<VpicResult> Results { get; set; }
-    }
-
-    public class VpicResult
-    {
-        public string? Variable { get; set; }
-        public string? Value { get; set; }
     }
 }
