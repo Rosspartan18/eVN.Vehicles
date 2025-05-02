@@ -15,7 +15,7 @@ builder.Services.AddScoped<INhtsaServiceClient, NhtsaServiceClient>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IVehicleAugmentingService, VehicleAugmentingService>();
 
-builder.Services.AddHttpClient<NhtsaServiceClient>("nhtsa", client =>
+builder.Services.AddHttpClient<INhtsaServiceClient, NhtsaServiceClient>("nhtsa", client =>
 {
     client.BaseAddress = new Uri("https://vpic.nhtsa.dot.gov");
 
