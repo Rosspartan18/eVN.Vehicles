@@ -1,6 +1,6 @@
 ﻿using LiteDB;
 
-namespace env.Vehicles.Infrastructure
+namespace env.Vehicles.Infrastructure.Storage
 {
     public class VehicleDataStore : LiteDbQueryableDataStore<Models.Vehicle>
     {

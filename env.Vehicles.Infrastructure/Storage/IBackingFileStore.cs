@@ -1,5 +1,4 @@
-﻿
-namespace env.Vehicles.Infrastructure
+﻿namespace env.Vehicles.Infrastructure.Storage
 {
     /// <summary>
     /// Defines methods for storing and retrieving files in a backing file store.

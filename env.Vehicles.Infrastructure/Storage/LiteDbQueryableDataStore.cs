@@ -1,6 +1,6 @@
 ﻿using LiteDB;
 
-namespace env.Vehicles.Infrastructure
+namespace env.Vehicles.Infrastructure.Storage
 {
     /// <summary>
     /// Implementation of <see cref="IQueryableDataStore{T}"/> using LiteDB.
