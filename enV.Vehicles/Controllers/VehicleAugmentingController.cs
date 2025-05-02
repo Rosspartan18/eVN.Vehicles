@@ -5,11 +5,17 @@ namespace enV.Vehicles.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    /// <summary>
+    /// Controller for augmenting vehicle data with external sources.
+    /// </summary>
     public class VehicleAugmentingController : ControllerBase
     {
         private readonly ILogger<VehicleAugmentingController> _logger;
         private readonly IVehicleAugmentingService _vehicleAugmentingService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VehicleAugmentingController"/> class.
+        /// </summary>
         public VehicleAugmentingController(IVehicleAugmentingService vehicleAugmentingService, ILogger<VehicleAugmentingController> logger)
         {
             _logger = logger;

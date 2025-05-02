@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace enV.Vehicles.Services.Entities
-{
+{    
+    /// <summary>
+    /// Represents a vehicle entity.
+    /// </summary>
     public class Vehicle
     {
         public int DealerId { get; internal set; }

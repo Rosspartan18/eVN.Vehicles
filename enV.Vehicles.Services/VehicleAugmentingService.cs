@@ -5,10 +5,18 @@ using env.Vehicles.Infrastructure;
 
 namespace enV.Vehicles.Services
 {
+    /// <summary>
+    /// Provides services for augmenting vehicle data with external sources.
+    /// </summary>
     public class VehicleAugmentingService : IVehicleAugmentingService
     {
         private readonly IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> _queryableDataStore;
         private readonly HttpClient _httpClient;
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VehicleAugmentingService"/> class.
+        /// </summary>
         public VehicleAugmentingService(IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> queryableDataStore, IHttpClientFactory httpClientFactory)
         {
             _queryableDataStore = queryableDataStore;

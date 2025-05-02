@@ -6,11 +6,17 @@ using enV.Vehicles.Services.Entities;
 
 namespace enV.Vehicles.Services
 {
-
+    /// <summary>
+    /// Provides services for managing vehicle data.
+    /// </summary>
     public class VehicleService : IVehicleService
     {
         private readonly IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> _queryableDataStore;
         private readonly IBackingFileStore _backingFileStore;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VehicleService"/> class.
+        /// </summary>
         public VehicleService(IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> queryableDataStore, IBackingFileStore backingFileStore)
         {
             _queryableDataStore = queryableDataStore;

@@ -2,11 +2,17 @@
 
 namespace env.Vehicles.Infrastructure
 {
+    /// <summary>
+    /// Implementation of <see cref="IQueryableDataStore{T}"/> using LiteDB.
+    /// </summary>
     public abstract class LiteDbQueryableDataStore<T> : IQueryableDataStore<T>, IDisposable where T : class
     {
         private readonly ILiteDatabase _database;
         private bool _disposed;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LiteDbQueryableDataStore{T}"/> class.
+        /// </summary>
         public LiteDbQueryableDataStore(ILiteDatabase database)
         {
             _database = database;

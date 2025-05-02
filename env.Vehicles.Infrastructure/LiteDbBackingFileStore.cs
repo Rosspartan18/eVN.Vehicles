@@ -9,6 +9,9 @@ namespace env.Vehicles.Infrastructure
     {
         private readonly ILiteDatabase _database;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LiteDbBackingFileStore"/> class.
+        /// </summary>
         public LiteDbBackingFileStore(ILiteDatabase database)
         {
             _database = database;
