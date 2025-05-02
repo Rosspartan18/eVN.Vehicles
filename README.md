@@ -27,46 +27,46 @@ dotnet build
 Run the application using the following command:
 dotnet run --project enV.Vehicles
 
-The application will start and listen on the default ports (e.g., `https://localhost:5001`).
+The application will start and listen on the ports specified in launch profile (e.g., `https://localhost:7115`).
 
 ### 4. Access the API
 You can access the API endpoints using tools like [Postman](https://www.postman.com/) or [curl](https://curl.se/).
-If the application is running in development, you can access the swagger page at `https://localhost:5001/swagger` to view the API documentation and test the endpoints.
+If the application is running in development, you can access the swagger page at `https://localhost:7115/swagger` to view the API documentation and test the endpoints.
 
 
 #### Import a CSV File
 - **Endpoint**: `POST /Vehicle/import-csv`
 - **Description**: Upload a CSV file to import vehicle data.
 - **Example**:
-curl -X POST -F "file=@path/to/vehicles.csv" https://localhost:5001/Vehicle/import-csv
+curl -X POST -F "file=@path/to/vehicles.csv" https://localhost:7115/Vehicle/import-csv
 
 
 #### Get Vehicle by VIN
 - **Endpoint**: `GET /Vehicle/get-by-vin/{vin}`
 - **Description**: Retrieve vehicle details by VIN.
 - **Example**:
-curl https://localhost:5001/Vehicle/get-by-vin/1HGCM82633A123456
+curl https://localhost:7115/Vehicle/get-by-vin/1HGCM82633A123456
 
 
 #### List Vehicles with Pagination and Filtering
 - **Endpoint**: `GET /Vehicle/list`
 - **Description**: List vehicles with pagination and optional filtering by dealer ID or modification date.
 - **Example**:
-curl "https://localhost:5001/Vehicle/list?pageNumber=1&pageSize=10&dealerId=1"
+curl "https://localhost:7115/Vehicle/list?pageNumber=1&pageSize=10&dealerId=1"
 
 
 #### Retrieve Imported CSV
 - **Endpoint**: `GET /Vehicle/get-imported-csv/{csvIdentifier}`
 - **Description**: Retrieve the imported CSV file by its identifier.
 - **Example**:
-curl -O https://localhost:5001/Vehicle/get-imported-csv/{csvIdentifier}
+curl -O https://localhost:7115/Vehicle/get-imported-csv/{csvIdentifier}
 
 
 #### Augment Vehicles with External Data
 - **Endpoint**: `POST /VehicleAugmenting/augment`
 - **Description**: Augment vehicle data using the NHTSA vPIC API.
 - **Example**:
-curl -X POST https://localhost:5001/VehicleAugmenting/augment
+curl -X POST https://localhost:7115/VehicleAugmenting/augment
 
 
 ## Configuration
