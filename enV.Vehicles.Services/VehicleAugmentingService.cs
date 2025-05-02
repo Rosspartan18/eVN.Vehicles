@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Net.Http.Json;
-using System.Text.Json;
+﻿using System.Net.Http.Json;
 using env.Vehicles.Infrastructure;
 
 namespace enV.Vehicles.Services
@@ -12,7 +10,6 @@ namespace enV.Vehicles.Services
     {
         private readonly IQueryableDataStore<env.Vehicles.Infrastructure.Models.Vehicle> _queryableDataStore;
         private readonly HttpClient _httpClient;
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VehicleAugmentingService"/> class.
@@ -111,7 +108,7 @@ namespace enV.Vehicles.Services
         {
             var vpicResult = vpicResults.FirstOrDefault(x => x.Variable == name);
 
-            if (vpicResult == null)
+            if (vpicResult == null || vpicResult.Value == null)
             {
                 value = string.Empty;
                 return false;
@@ -129,12 +126,12 @@ namespace enV.Vehicles.Services
     public class VpicResponse
     {
 
-        public List<VpicResult> Results { get; set; }
+        public required List<VpicResult> Results { get; set; }
     }
 
     public class VpicResult
     {
-        public string Variable { get; set; }
-        public string Value { get; set; }
+        public string? Variable { get; set; }
+        public string? Value { get; set; }
     }
 }

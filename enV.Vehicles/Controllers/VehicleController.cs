@@ -1,6 +1,3 @@
-using System.Formats.Asn1;
-using System.Globalization;
-using CsvHelper;
 using enV.Vehicles.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,14 +49,22 @@ namespace enV.Vehicles.Controllers
         [HttpGet("get-by-vin/{vin}")]
         public async Task<IActionResult> GetVehicleByVin(string vin)
         {
-            var vehicle = await _vehicleService.GetVehicleByVin(vin).ConfigureAwait(false);
-
-            if (vehicle == null)
+            try
             {
-                return NotFound(new { Message = $"Vehicle with VIN '{vin}' not found." });
-            }
+                var vehicle = await _vehicleService.GetVehicleByVin(vin).ConfigureAwait(false);
 
-            return Ok(vehicle);
+                if (vehicle == null)
+                {
+                    return NotFound(new { Message = $"Vehicle with VIN '{vin}' not found." });
+                }
+
+                return Ok(vehicle);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while getting vehicle by VIN.");
+                return StatusCode(500, "An error occurred while getting vehicle by VIN.");
+            }
         }
 
         [HttpGet("list")]
